@@ -2,9 +2,10 @@
 
 A real-time health monitoring dashboard for a college ISP with ~10,000 deployed Wi-Fi routers.
 
-**Live Demo:**
-- Frontend: `https://<your-vercel-app>.vercel.app`
-- Backend API: `https://<your-render-app>.onrender.com`
+**Live Deployment:**
+- **Frontend Dashboard**: `https://campus-router-health-360.vercel.app`
+- **Backend API**: `https://campus-router-health-360.onrender.com`
+- **GitHub Repository**: `https://github.com/SANJANA/Campus-Router-Health-360`
 
 ---
 
