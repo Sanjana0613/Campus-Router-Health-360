@@ -4,8 +4,10 @@ A real-time health monitoring dashboard for a college ISP with ~10,000 deployed 
 
 **Live Deployment:**
 - **Frontend Dashboard**: `https://campus-router-health-360.vercel.app`
-- **Backend API**: `https://campus-router-health-360.onrender.com`
-- **GitHub Repository**: `https://github.com/SANJANA/Campus-Router-Health-360`
+- **Backend API Docs & Swagger**: `https://campus-router-health-360.onrender.com/docs`
+- **Backend Health Endpoint**: `https://campus-router-health-360.onrender.com/health`
+- **GitHub Repository**: `https://github.com/Sanjana0613/Campus-Router-Health-360`
+
 
 ---
 
