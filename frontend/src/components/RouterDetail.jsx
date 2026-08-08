@@ -1,12 +1,18 @@
-// components/RouterDetail.jsx — right panel: metadata, charts, complaints, copilot
+// components/RouterDetail.jsx — Detailed Router Panel (Metrics Overview, Metadata Grid, Charts, Complaints, Copilot)
 
 import { useEffect, useState } from 'react'
+import {
+  Wifi, Zap, Clock, ShieldAlert, RefreshCw, Radio, HardDrive,
+  Building, MapPin, User, Calendar, MessageSquare, Info
+} from 'lucide-react'
 import { getRouterDetail } from '../api/client.js'
 import MetricChart from './MetricChart.jsx'
 import CopilotPanel from './CopilotPanel.jsx'
-import { getScoreColor, getScoreLabel } from './ScoreUtils.js'
+import {
+  getScoreColor, getStatusBadgeClass, getStatusLabel, getFailurePattern
+} from './ScoreUtils.js'
 
-export default function RouterDetail({ routerId }) {
+export default function RouterDetail({ routerId, isDark }) {
   const [detail, setDetail] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -25,140 +31,275 @@ export default function RouterDetail({ routerId }) {
 
   if (!routerId) {
     return (
-      <div className="empty-state">
-        <div className="empty-icon">📡</div>
-        <div className="empty-title">Select a router to inspect</div>
-        <div className="empty-subtitle">
-          Click any router in the worst-10 list to see its metrics, complaints, and AI diagnosis.
-        </div>
+      <div className="h-full flex flex-col items-center justify-center text-center p-8 text-[var(--text-muted)]">
+        <Wifi className="w-12 h-12 mb-3 opacity-30 animate-pulse" />
+        <h3 className="text-base font-bold text-[var(--text-main)] mb-1">No Router Selected</h3>
+        <p className="text-xs max-w-xs">
+          Select any router from the fleet navigation on the left to inspect detailed metrics, complaints, and AI diagnostics.
+        </p>
       </div>
     )
   }
 
   if (loading) {
     return (
-      <div className="loading-spinner">
-        <div className="spinner" />
-        <span>Loading {routerId}…</span>
+      <div className="h-full flex flex-col items-center justify-center p-12 text-[var(--text-muted)] gap-3">
+        <div className="w-8 h-8 border-3 border-[var(--border-card)] border-t-[var(--color-accent-blue)] rounded-full animate-spin" />
+        <span className="text-xs font-medium">Loading details for {routerId}…</span>
       </div>
     )
   }
 
   if (error) {
-    return <div className="error-box">Error loading {routerId}: {error}</div>
+    return (
+      <div className="p-4 m-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 text-xs">
+        Error loading {routerId}: {error}
+      </div>
+    )
   }
 
   if (!detail) return null
 
   const { router, metrics, complaints, stats } = detail
-  const scoreColor = getScoreColor(stats.score)
-  const scoreLabel = getScoreLabel(stats.score)
+  const score = stats.score ?? 0
+  const color = getScoreColor(score)
+  const statusBadgeClass = getStatusBadgeClass(score)
+  const statusLabel = getStatusLabel(score)
+  const pattern = getFailurePattern({ ...router, ...stats, complaints_count: complaints.length })
 
-  // Stat goodness bars (from score breakdown — we don't have per-goodness here, but can approximate visually)
-  const statItems = [
-    { key: 'avg_speed', label: 'Avg Speed', value: stats.avg_speed, unit: 'Mbps', color: 'var(--accent-blue)' },
-    { key: 'avg_latency', label: 'Latency', value: stats.avg_latency, unit: 'ms', color: 'var(--accent-purple)' },
-    { key: 'avg_packet_loss', label: 'Pkt Loss', value: stats.avg_packet_loss, unit: '%', color: 'var(--accent-red)' },
-    { key: 'avg_disconnects', label: 'Disconnects', value: stats.avg_disconnects, unit: '/hr', color: 'var(--accent-orange)' },
-    { key: 'avg_signal', label: 'Signal', value: stats.avg_signal, unit: 'dBm', color: 'var(--accent-teal)' },
+  // 5 Metric Overview Cards Specs
+  const metricCards = [
+    {
+      key: 'speed',
+      label: 'Avg Speed',
+      val: stats.avg_speed?.toFixed(1),
+      unit: 'Mbps',
+      icon: Zap,
+      color: '#3b82f6',
+      tooltip: 'Fleet benchmark avg ~47.8 Mbps. Higher is better.',
+    },
+    {
+      key: 'latency',
+      label: 'Avg Latency',
+      val: stats.avg_latency?.toFixed(0),
+      unit: 'ms',
+      icon: Clock,
+      color: '#8b5cf6',
+      tooltip: 'Fleet benchmark avg ~41.4 ms. Lower is better.',
+    },
+    {
+      key: 'packet_loss',
+      label: 'Packet Loss',
+      val: stats.avg_packet_loss?.toFixed(1),
+      unit: '%',
+      icon: ShieldAlert,
+      color: '#ef4444',
+      tooltip: 'Fleet benchmark avg ~0.9%. Lower is better.',
+    },
+    {
+      key: 'disconnects',
+      label: 'Disconnects',
+      val: stats.avg_disconnects?.toFixed(1),
+      unit: '/hr',
+      icon: RefreshCw,
+      color: '#f59e0b',
+      tooltip: 'Fleet benchmark avg ~0.96/hr. Lower is better.',
+    },
+    {
+      key: 'signal',
+      label: 'Signal Strength',
+      val: stats.avg_signal?.toFixed(0),
+      unit: 'dBm',
+      icon: Radio,
+      color: '#10b981',
+      tooltip: 'Fleet benchmark avg ~-53.8 dBm. Higher (closer to 0) is better.',
+    },
   ]
 
-  const metaItems = [
-    { label: 'Model', value: router.model },
-    { label: 'Firmware', value: router.firmware_version },
-    { label: 'Building', value: router.building },
-    { label: 'Room', value: router.room },
-    { label: 'User Type', value: router.user_type },
-    { label: 'Issue Date', value: router.issue_date },
+  // Metadata items
+  const metadataItems = [
+    { label: 'Model', val: router.model, icon: HardDrive },
+    { label: 'Firmware', val: router.firmware_version, icon: RefreshCw },
+    { label: 'Building', val: router.building, icon: Building },
+    { label: 'Room', val: `Room ${router.room}`, icon: MapPin },
+    { label: 'User Type', val: router.user_type, icon: User },
+    { label: 'Issue Date', val: router.issue_date, icon: Calendar },
   ]
 
   return (
-    <div id="router-detail-panel">
-      {/* Header */}
-      <div className="detail-header">
-        <div>
-          <div className="detail-id">{router.router_id}</div>
-          <div className="detail-building">
-            {router.building} · Room {router.room} · {router.user_type}
-          </div>
-        </div>
-        <div className="detail-score-block">
-          <div className="detail-score-num" style={{ color: scoreColor }}>
-            {stats.score?.toFixed(1)}
-          </div>
-          <div className="detail-score-label">{scoreLabel} · {stats.sample_count}h sampled</div>
-        </div>
-      </div>
+    <div className="space-y-6 pb-8" id="router-detail-container">
+      
+      {/* 1. Header Overview Banner */}
+      <div className="theme-card p-6 relative overflow-hidden">
+        
+        {/* Accent Bar */}
+        <div className="absolute top-0 left-0 right-0 h-1.5" style={{ backgroundColor: color }} />
 
-      {/* Stats grid */}
-      <div className="stats-grid">
-        {statItems.map((s) => (
-          <div key={s.key} className="stat-card">
-            <div className="stat-val" style={{ color: s.color }}>
-              {s.value?.toFixed(s.unit === 'Mbps' ? 1 : s.unit === 'dBm' ? 0 : 2)}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <h2 className="text-2xl font-extrabold font-mono text-[var(--text-main)] tracking-tight">
+                {router.router_id}
+              </h2>
+              <span className={`status-badge ${statusBadgeClass}`}>
+                {statusLabel}
+              </span>
+              <span
+                className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                style={{ backgroundColor: pattern.bg, color: pattern.color }}
+                title={pattern.desc}
+              >
+                {pattern.label}
+              </span>
             </div>
-            <div className="stat-key">{s.label}</div>
-            <div className="stat-key" style={{ fontSize: 9 }}>{s.unit}</div>
+
+            <p className="text-xs text-[var(--text-muted)]">
+              {router.building} · Room {router.room} · Assigned to {router.user_type} users
+            </p>
           </div>
-        ))}
+
+          {/* Large Health Score Ring / Box */}
+          <div className="flex items-center gap-3 sm:border-l sm:border-[var(--border-app)] sm:pl-6">
+            <div className="text-right">
+              <div className="text-3xl font-black font-mono leading-none" style={{ color }}>
+                {score.toFixed(1)}
+              </div>
+              <div className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-subtle)] mt-1">
+                Health Score ({stats.sample_count}h sampled)
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      {/* Router metadata */}
-      <div className="section-heading">Router Info</div>
-      <div className="meta-grid">
-        {metaItems.map((m) => (
-          <div key={m.label} className="meta-item">
-            <div className="meta-label">{m.label}</div>
-            <div className="meta-value">{m.value ?? '—'}</div>
-          </div>
-        ))}
+      {/* 2. Top 5 Metric Cards Summary */}
+      <div>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3 flex items-center gap-1.5">
+          <Info className="w-3.5 h-3.5 text-blue-500" /> Metric Performance Overview
+        </h3>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {metricCards.map((m) => {
+            const IconComponent = m.icon
+            return (
+              <div key={m.key} className="theme-card p-3.5 relative group theme-card-hover">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                    {m.label}
+                  </span>
+                  <div
+                    className="w-6 h-6 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: `${m.color}18`, color: m.color }}
+                  >
+                    <IconComponent className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+
+                <div className="text-xl font-extrabold font-mono text-[var(--text-main)] leading-none">
+                  {m.val ?? '—'}{' '}
+                  <span className="text-xs font-normal text-[var(--text-subtle)] font-sans">{m.unit}</span>
+                </div>
+
+                {/* Tooltip on hover */}
+                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-30 w-44 p-2 rounded-lg text-[10px] bg-slate-900 text-slate-100 border border-slate-700 shadow-lg pointer-events-none">
+                  {m.tooltip}
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
-      {/* Charts */}
-      <div className="section-heading">Metrics Over Time</div>
-      <div className="charts-grid">
+      {/* 3. Hardware & Inventory Metadata Grid */}
+      <div>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">
+          Hardware & Location Inventory
+        </h3>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {metadataItems.map((m) => {
+            const IconComp = m.icon
+            return (
+              <div key={m.label} className="theme-card p-3">
+                <div className="flex items-center gap-1.5 text-[10px] font-medium text-[var(--text-muted)] uppercase mb-1">
+                  <IconComp className="w-3 h-3 text-[var(--color-accent-blue)]" />
+                  <span>{m.label}</span>
+                </div>
+                <div className="text-xs font-bold font-mono text-[var(--text-main)] truncate">
+                  {m.val ?? '—'}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 4. Time-Series Metric Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <MetricChart
           data={metrics}
           dataKey="avg_speed_mbps"
-          label="Speed"
-          color="var(--accent-blue)"
+          label="Speed (Mbps)"
+          color="#3b82f6"
           unit="Mbps"
           avg={stats.avg_speed}
+          isDark={isDark}
         />
         <MetricChart
           data={metrics}
           dataKey="packet_loss_pct"
-          label="Packet Loss"
-          color="var(--accent-red)"
+          label="Packet Loss (%)"
+          color="#ef4444"
           unit="%"
           avg={stats.avg_packet_loss}
+          isDark={isDark}
         />
       </div>
 
-      {/* Complaints */}
-      <div className="complaints-section">
-        <div className="section-heading">
-          Complaints
-          <span style={{ fontSize: 11, fontWeight: 500, textTransform: 'none', letterSpacing: 0, color: 'var(--accent-orange)' }}>
-            {complaints.length > 0 ? ` ${complaints.length} ticket${complaints.length !== 1 ? 's' : ''}` : ''}
+      {/* 5. Complaints Ticket History */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2">
+            <MessageSquare className="w-3.5 h-3.5 text-amber-500" />
+            User Complaint History
+          </h3>
+          <span className="text-xs font-mono text-[var(--text-muted)]">
+            {complaints.length} Ticket{complaints.length !== 1 ? 's' : ''} Logged
           </span>
         </div>
+
         {complaints.length === 0 ? (
-          <div className="no-complaints">No complaints filed for this router.</div>
+          <div className="theme-card p-4 text-center text-xs text-[var(--text-muted)] border-dashed">
+            No complaints filed for this router.
+          </div>
         ) : (
-          <div className="complaints-list" id="complaints-list">
+          <div className="space-y-2" id="complaints-list-container">
             {complaints.map((c) => (
-              <div key={c.ticket_id} className="complaint-item">
-                <div className="complaint-text">"{c.complaint_text}"</div>
-                <div className="complaint-meta">{c.ticket_id} · {c.date}</div>
+              <div
+                key={c.ticket_id}
+                className="theme-card p-3.5 border-l-4 border-l-amber-500 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+              >
+                <div>
+                  <p className="text-xs font-medium text-[var(--text-main)] italic">
+                    "{c.complaint_text}"
+                  </p>
+                  <span className="text-[10px] font-mono text-[var(--text-subtle)] mt-1 block">
+                    Ticket ID: {c.ticket_id}
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono text-[var(--text-muted)] shrink-0">
+                  {c.date}
+                </span>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Copilot */}
-      <CopilotPanel routerId={router.router_id} />
+      {/* 6. AI Copilot Diagnosis Panel */}
+      <CopilotPanel routerId={router.router_id} isDark={isDark} />
+
     </div>
   )
 }
