@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== ENTERPRISE SAAS DESIGN SYSTEM (DATADOG / LINEAR / VERCEL STYLE) ===== */
+/* ===== ENTERPRISE SAAS DUAL-THEME ENGINE (3-TIER SURFACE HIERARCHY) ===== */
 
 @layer base {
   :root {
@@ -12,7 +12,7 @@
     --bg-panel: #ffffff;
     --bg-card: #ffffff;
     --bg-card-hover: #f1f5f9;    /* Slate-100 */
-    --bg-input: #ffffff;
+    --bg-input: #f8fafc;
     --bg-chip: #f1f5f9;
 
     --border-app: #e2e8f0;       /* Slate-200 */
@@ -25,8 +25,8 @@
     --text-muted: #64748b;       /* Slate-500 */
     --text-subtle: #94a3b8;      /* Slate-400 */
 
-    --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
-    --shadow-hover: 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+    --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+    --shadow-hover: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
 
     /* Targeted Status Colors (Light Mode) */
     --color-critical: #dc2626;
@@ -49,43 +49,43 @@
   }
 
   html.dark {
-    /* DARK MODE (Pro Cyber Midnight Navy) */
-    --bg-app: #090d16;           /* Deep Midnight Navy */
-    --bg-header: rgba(11, 15, 25, 0.95);
-    --bg-panel: #0f172a;         /* Slate-900 */
-    --bg-card: #111827;          /* Slate-900 / Gray-900 */
-    --bg-card-hover: #1e293b;    /* Slate-800 */
-    --bg-input: #0b0f19;
-    --bg-chip: rgba(255, 255, 255, 0.05);
+    /* DARK MODE (PRO CYBER MIDNIGHT NAVY - 3-TIER SURFACE DEPTH) */
+    --bg-app: #090d16;           /* Tier 1: Deep Page Background */
+    --bg-header: rgba(17, 24, 39, 0.95); /* #111827 */
+    --bg-panel: #131b2e;         /* Tier 2: Slate Navy Panels */
+    --bg-card: #131b2e;          /* Tier 2: Card Containers */
+    --bg-card-hover: #1f2c47;    /* Elevated Hover Surface */
+    --bg-input: #1a243b;         /* Tier 3: Inner Items, Search, Pills */
+    --bg-chip: #1a243b;
 
-    --border-app: rgba(255, 255, 255, 0.07);
-    --border-card: #1e293b;      /* Slate-800 */
+    --border-app: #1e293b;       /* Slate-800 Header Border */
+    --border-card: #23314e;      /* Distinct Card Surface Border */
     --border-bright: #334155;    /* Slate-700 */
     --border-focus: #3b82f6;
 
-    --text-main: #f8fafc;        /* Slate-50 */
-    --text-secondary: #cbd5e1;   /* Slate-300 */
-    --text-muted: #94a3b8;       /* Slate-400 */
-    --text-subtle: #64748b;      /* Slate-500 */
+    --text-main: #f8fafc;        /* Slate-50 Crisp Primary Text */
+    --text-secondary: #e2e8f0;   /* Slate-200 */
+    --text-muted: #cbd5e1;       /* Slate-300 Section Titles */
+    --text-subtle: #94a3b8;      /* Slate-400 */
 
-    --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
-    --shadow-hover: 0 8px 28px -4px rgba(0, 0, 0, 0.5);
+    --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+    --shadow-hover: 0 8px 28px -4px rgba(0, 0, 0, 0.55);
 
     /* Targeted Status Colors (Dark Mode) */
     --color-critical: #f87171;
-    --color-critical-bg: rgba(239, 68, 68, 0.12);
-    --color-critical-border: rgba(239, 68, 68, 0.3);
+    --color-critical-bg: rgba(239, 68, 68, 0.15);
+    --color-critical-border: rgba(239, 68, 68, 0.4);
 
     --color-warning: #fb923c;
-    --color-warning-bg: rgba(245, 158, 11, 0.12);
-    --color-warning-border: rgba(245, 158, 11, 0.3);
+    --color-warning-bg: rgba(245, 158, 11, 0.15);
+    --color-warning-border: rgba(245, 158, 11, 0.4);
 
     --color-healthy: #34d399;
-    --color-healthy-bg: rgba(16, 185, 129, 0.12);
-    --color-healthy-border: rgba(16, 185, 129, 0.3);
+    --color-healthy-bg: rgba(16, 185, 129, 0.15);
+    --color-healthy-border: rgba(16, 185, 129, 0.4);
 
-    --color-copilot-bg: rgba(49, 46, 129, 0.2);
-    --color-copilot-border: rgba(99, 102, 241, 0.3);
+    --color-copilot-bg: rgba(49, 46, 129, 0.25);
+    --color-copilot-border: rgba(99, 102, 241, 0.4);
   }
 
   body {
@@ -100,7 +100,7 @@
 /* Custom Scrollbars */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 99px; }
+::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
 
 /* Enterprise SaaS Utility Classes */
@@ -132,7 +132,7 @@
 
   .enterprise-input:focus {
     border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
   }
 
   .status-badge {

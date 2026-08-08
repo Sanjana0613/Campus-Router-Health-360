@@ -1,10 +1,10 @@
-// components/Header.jsx — Enterprise Top Navigation Bar
+// components/Header.jsx — Enterprise Top Navigation Bar with Distinct Header Surface & Border
 
 import { Sun, Moon, Activity, ShieldAlert, Cpu } from 'lucide-react'
 
 export default function Header({ isDark, onToggleTheme, totalCount, criticalCount, avgScore }) {
   return (
-    <header className="sticky top-0 z-50 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-app)] transition-colors duration-150">
+    <header className="sticky top-0 z-50 bg-[var(--bg-header)] backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-150">
       <div className="max-w-[1700px] mx-auto px-6 h-14 flex items-center justify-between">
         
         {/* Brand Header */}
@@ -21,7 +21,7 @@ export default function Header({ isDark, onToggleTheme, totalCount, criticalCoun
                 Enterprise
               </span>
             </div>
-            <p className="text-[11px] text-[var(--text-muted)] hidden sm:block">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">
               ISP Fleet Health & Diagnostic Intelligence
             </p>
           </div>
@@ -31,45 +31,45 @@ export default function Header({ isDark, onToggleTheme, totalCount, criticalCoun
         <div className="flex items-center gap-3">
           
           <div className="hidden md:flex items-center gap-2 text-xs">
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--bg-chip)] border border-[var(--border-card)]">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-[#1a243b] border border-slate-200 dark:border-[#23314e]">
               <Activity className="w-3.5 h-3.5 text-emerald-500" />
-              <span className="text-[var(--text-muted)]">Fleet:</span>
+              <span className="text-slate-600 dark:text-slate-300">Fleet:</span>
               <span className="font-bold font-mono text-[var(--text-main)]">{totalCount ?? 0}</span>
             </div>
 
             {criticalCount > 0 && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-500 font-mono">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 font-mono">
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span className="font-bold">{criticalCount} Critical</span>
               </div>
             )}
 
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--bg-chip)] border border-[var(--border-card)]">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-[#1a243b] border border-slate-200 dark:border-[#23314e]">
               <Cpu className="w-3.5 h-3.5 text-blue-500" />
-              <span className="text-[var(--text-muted)]">Avg Score:</span>
+              <span className="text-slate-600 dark:text-slate-300">Avg Score:</span>
               <span className="font-bold font-mono text-[var(--text-main)]">
                 {avgScore != null ? avgScore.toFixed(1) : '—'}
               </span>
             </div>
           </div>
 
-          {/* Clean Enterprise Day / Night Mode Toggle */}
+          {/* Clean Day / Night Toggle */}
           <button
             onClick={onToggleTheme}
             id="theme-toggle-btn"
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[var(--bg-chip)] border border-[var(--border-card)] text-[var(--text-main)] hover:bg-[var(--bg-card-hover)] transition-all text-xs font-medium cursor-pointer"
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-slate-100 dark:bg-[#1a243b] border border-slate-200 dark:border-[#23314e] text-[var(--text-main)] hover:bg-slate-200 dark:hover:bg-[#23314e] transition-all text-xs font-medium cursor-pointer"
             title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
             aria-label="Toggle theme"
           >
             {isDark ? (
               <>
                 <Sun className="w-3.5 h-3.5 text-amber-400" />
-                <span className="text-[11px] font-medium text-[var(--text-secondary)]">Light</span>
+                <span className="text-[11px] font-medium text-slate-200">Light Mode</span>
               </>
             ) : (
               <>
                 <Moon className="w-3.5 h-3.5 text-slate-700" />
-                <span className="text-[11px] font-medium text-[var(--text-secondary)]">Dark</span>
+                <span className="text-[11px] font-medium text-slate-700">Dark Mode</span>
               </>
             )}
           </button>
