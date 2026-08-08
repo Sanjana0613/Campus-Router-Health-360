@@ -2,62 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== GLOBAL DESIGN SYSTEM TOKENS ===== */
+/* ===== ENTERPRISE SAAS DESIGN SYSTEM (DATADOG / LINEAR / VERCEL STYLE) ===== */
 
 @layer base {
   :root {
-    --bg-app: #f8fafc;
-    --bg-header: rgba(255, 255, 255, 0.9);
+    /* LIGHT MODE (Clean Enterprise Slate) */
+    --bg-app: #f8fafc;           /* Slate-50 */
+    --bg-header: rgba(255, 255, 255, 0.95);
     --bg-panel: #ffffff;
     --bg-card: #ffffff;
-    --bg-card-hover: #f1f5f9;
-    --bg-input: #f8fafc;
+    --bg-card-hover: #f1f5f9;    /* Slate-100 */
+    --bg-input: #ffffff;
     --bg-chip: #f1f5f9;
 
-    --border-app: #e2e8f0;
+    --border-app: #e2e8f0;       /* Slate-200 */
     --border-card: #e2e8f0;
-    --border-bright: #cbd5e1;
+    --border-bright: #cbd5e1;    /* Slate-300 */
     --border-focus: #3b82f6;
 
-    --text-main: #0f172a;
-    --text-secondary: #334155;
-    --text-muted: #64748b;
-    --text-subtle: #94a3b8;
+    --text-main: #0f172a;        /* Slate-900 */
+    --text-secondary: #334155;   /* Slate-700 */
+    --text-muted: #64748b;       /* Slate-500 */
+    --text-subtle: #94a3b8;      /* Slate-400 */
 
-    --color-critical: #ef4444;
+    --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
+    --shadow-hover: 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+
+    /* Targeted Status Colors (Light Mode) */
+    --color-critical: #dc2626;
     --color-critical-bg: #fef2f2;
     --color-critical-border: #fecaca;
 
-    --color-warning: #f59e0b;
+    --color-warning: #d97706;
     --color-warning-bg: #fffbeb;
     --color-warning-border: #fde68a;
 
-    --color-healthy: #10b981;
+    --color-healthy: #059669;
     --color-healthy-bg: #ecfdf5;
     --color-healthy-border: #a7f3d0;
 
-    --color-accent-blue: #3b82f6;
+    --color-copilot-bg: #f5f3ff;
+    --color-copilot-border: #ddd6fe;
+
+    --font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   html.dark {
-    --bg-app: #0b0f19;
-    --bg-header: rgba(11, 15, 25, 0.9);
-    --bg-panel: #111827;
-    --bg-card: #1e293b;
-    --bg-card-hover: #27354c;
-    --bg-input: #0f172a;
-    --bg-chip: rgba(255, 255, 255, 0.06);
+    /* DARK MODE (Pro Cyber Midnight Navy) */
+    --bg-app: #090d16;           /* Deep Midnight Navy */
+    --bg-header: rgba(11, 15, 25, 0.95);
+    --bg-panel: #0f172a;         /* Slate-900 */
+    --bg-card: #111827;          /* Slate-900 / Gray-900 */
+    --bg-card-hover: #1e293b;    /* Slate-800 */
+    --bg-input: #0b0f19;
+    --bg-chip: rgba(255, 255, 255, 0.05);
 
-    --border-app: rgba(255, 255, 255, 0.08);
-    --border-card: rgba(255, 255, 255, 0.08);
-    --border-bright: rgba(255, 255, 255, 0.18);
+    --border-app: rgba(255, 255, 255, 0.07);
+    --border-card: #1e293b;      /* Slate-800 */
+    --border-bright: #334155;    /* Slate-700 */
     --border-focus: #3b82f6;
 
-    --text-main: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --text-subtle: #64748b;
+    --text-main: #f8fafc;        /* Slate-50 */
+    --text-secondary: #cbd5e1;   /* Slate-300 */
+    --text-muted: #94a3b8;       /* Slate-400 */
+    --text-subtle: #64748b;      /* Slate-500 */
 
+    --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+    --shadow-hover: 0 8px 28px -4px rgba(0, 0, 0, 0.5);
+
+    /* Targeted Status Colors (Dark Mode) */
     --color-critical: #f87171;
     --color-critical-bg: rgba(239, 68, 68, 0.12);
     --color-critical-border: rgba(239, 68, 68, 0.3);
@@ -69,57 +83,69 @@
     --color-healthy: #34d399;
     --color-healthy-bg: rgba(16, 185, 129, 0.12);
     --color-healthy-border: rgba(16, 185, 129, 0.3);
+
+    --color-copilot-bg: rgba(49, 46, 129, 0.2);
+    --color-copilot-border: rgba(99, 102, 241, 0.3);
   }
 
   body {
     background-color: var(--bg-app);
     color: var(--text-main);
-    font-family: 'Inter', -apple-system, BlinkMaxScroll, sans-serif;
+    font-family: var(--font-sans);
     min-height: 100vh;
+    letter-spacing: -0.01em;
   }
 }
 
 /* Custom Scrollbars */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 99px; }
+::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
 
-/* Custom Component Classes */
+/* Enterprise SaaS Utility Classes */
 @layer components {
-  .theme-card {
+  .enterprise-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-card);
-    border-radius: 12px;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 10px;
+    box-shadow: var(--shadow-card);
+    transition: all 0.15s ease-in-out;
   }
 
-  .theme-input {
+  .enterprise-card-hover:hover {
+    background-color: var(--bg-card-hover);
+    border-color: var(--border-bright);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .enterprise-input {
     background-color: var(--bg-input);
     border: 1px solid var(--border-card);
     color: var(--text-main);
     border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 7px 12px;
+    font-size: 12px;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
 
-  .theme-input:focus {
+  .enterprise-input:focus {
     border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
   }
 
   .status-badge {
     font-size: 11px;
     font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 99px;
+    padding: 2px 8px;
+    border-radius: 6px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    font-family: var(--font-mono);
   }
 
   .badge-critical {
@@ -138,5 +164,11 @@
     background-color: var(--color-healthy-bg);
     color: var(--color-healthy);
     border: 1px solid var(--color-healthy-border);
+  }
+
+  .badge-copilot {
+    background-color: var(--color-copilot-bg);
+    color: #818cf8;
+    border: 1px solid var(--color-copilot-border);
   }
 }

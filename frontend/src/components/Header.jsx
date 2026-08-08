@@ -1,80 +1,81 @@
-// components/Header.jsx — Navigation bar with Day/Night Theme Switcher
+// components/Header.jsx — Enterprise Top Navigation Bar
 
-import { Sun, Moon, Activity, Wifi, ShieldAlert } from 'lucide-react'
+import { Sun, Moon, Activity, ShieldAlert, Cpu } from 'lucide-react'
 
 export default function Header({ isDark, onToggleTheme, totalCount, criticalCount, avgScore }) {
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-[var(--bg-header)] border-b border-[var(--border-app)] transition-colors duration-200">
-      <div className="max-w-[1700px] mx-auto px-6 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-[var(--bg-header)] backdrop-blur-md border-b border-[var(--border-app)] transition-colors duration-150">
+      <div className="max-w-[1700px] mx-auto px-6 h-14 flex items-center justify-between">
         
-        {/* Brand & Logo */}
+        {/* Brand Header */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-            <Wifi className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-lg bg-slate-900 dark:bg-slate-100 flex items-center justify-center text-white dark:text-slate-900 font-extrabold font-mono text-sm shadow-xs">
+            360
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold tracking-tight text-[var(--text-main)]">
+              <h1 className="text-sm font-bold tracking-tight text-[var(--text-main)]">
                 Campus Router Health 360
               </h1>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20 uppercase tracking-wider">
-                v2.0 Pro
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-mono uppercase">
+                Enterprise
               </span>
             </div>
-            <p className="text-xs text-[var(--text-muted)]">
-              College ISP · Fleet Intelligence & AI Diagnostics
+            <p className="text-[11px] text-[var(--text-muted)] hidden sm:block">
+              ISP Fleet Health & Diagnostic Intelligence
             </p>
           </div>
         </div>
 
-        {/* Fleet Summary Badges & Theme Toggle */}
-        <div className="flex items-center gap-4">
+        {/* Fleet Metrics Summary Pills & Theme Toggle */}
+        <div className="flex items-center gap-3">
           
-          {/* Status Badges */}
-          <div className="hidden md:flex items-center gap-3 text-xs">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-chip)] border border-[var(--border-card)]">
-              <Activity className="w-4 h-4 text-emerald-500 animate-pulse" />
-              <span className="text-[var(--text-secondary)] font-medium">Monitored:</span>
+          <div className="hidden md:flex items-center gap-2 text-xs">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--bg-chip)] border border-[var(--border-card)]">
+              <Activity className="w-3.5 h-3.5 text-emerald-500" />
+              <span className="text-[var(--text-muted)]">Fleet:</span>
               <span className="font-bold font-mono text-[var(--text-main)]">{totalCount ?? 0}</span>
             </div>
 
             {criticalCount > 0 && (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500">
-                <ShieldAlert className="w-4 h-4" />
-                <span className="font-medium">Critical:</span>
-                <span className="font-bold font-mono">{criticalCount}</span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-500 font-mono">
+                <ShieldAlert className="w-3.5 h-3.5" />
+                <span className="font-bold">{criticalCount} Critical</span>
               </div>
             )}
 
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-chip)] border border-[var(--border-card)]">
-              <span className="text-[var(--text-secondary)] font-medium">Avg Fleet Score:</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--bg-chip)] border border-[var(--border-card)]">
+              <Cpu className="w-3.5 h-3.5 text-blue-500" />
+              <span className="text-[var(--text-muted)]">Avg Score:</span>
               <span className="font-bold font-mono text-[var(--text-main)]">
-                {avgScore != null ? avgScore.toFixed(1) : '—'} / 100
+                {avgScore != null ? avgScore.toFixed(1) : '—'}
               </span>
             </div>
           </div>
 
-          {/* Theme Switcher Button (Day / Night Mode) */}
+          {/* Clean Enterprise Day / Night Mode Toggle */}
           <button
             onClick={onToggleTheme}
             id="theme-toggle-btn"
-            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-card)] text-[var(--text-main)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-bright)] transition-all duration-200 shadow-sm cursor-pointer"
-            title={`Switch to ${isDark ? 'Day' : 'Night'} Mode`}
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[var(--bg-chip)] border border-[var(--border-card)] text-[var(--text-main)] hover:bg-[var(--bg-card-hover)] transition-all text-xs font-medium cursor-pointer"
+            title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
             aria-label="Toggle theme"
           >
             {isDark ? (
               <>
-                <Sun className="w-4 h-4 text-amber-400 animate-spin-slow" />
-                <span className="text-xs font-semibold">Day Mode</span>
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <span className="text-[11px] font-medium text-[var(--text-secondary)]">Light</span>
               </>
             ) : (
               <>
-                <Moon className="w-4 h-4 text-indigo-600" />
-                <span className="text-xs font-semibold">Night Mode</span>
+                <Moon className="w-3.5 h-3.5 text-slate-700" />
+                <span className="text-[11px] font-medium text-[var(--text-secondary)]">Dark</span>
               </>
             )}
           </button>
+
         </div>
+
       </div>
     </header>
   )
