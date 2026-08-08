@@ -1,8 +1,5 @@
 // components/ScoreUtils.js — Helper functions, status thresholds, failure pattern clustering
 
-/**
- * Returns status category: 'critical' | 'warning' | 'healthy'
- */
 export function getRouterStatus(score) {
   if (score < 30) return 'critical'
   if (score < 60) return 'warning'
@@ -32,7 +29,6 @@ export function getScoreColor(score) {
 
 /**
  * Failure Pattern Clustering Engine
- * Classifies routers into human-readable failure patterns based on their metrics & complaints
  */
 export function getFailurePattern(router) {
   const score = router.score ?? 100
@@ -47,8 +43,8 @@ export function getFailurePattern(router) {
     return {
       label: 'Signal Deadzone',
       code: 'DEADZONE',
-      color: '#ef4444',
-      bg: 'rgba(239, 68, 68, 0.12)',
+      color: '#f43f5e', // Crimson Coral
+      bg: 'rgba(244, 63, 94, 0.15)',
       desc: 'Physical location blockage or extreme attenuation'
     }
   }
@@ -57,8 +53,8 @@ export function getFailurePattern(router) {
     return {
       label: 'Firmware Instability',
       code: 'FIRMWARE',
-      color: '#f97316',
-      bg: 'rgba(249, 115, 22, 0.12)',
+      color: '#f59e0b', // Electric Amber
+      bg: 'rgba(245, 158, 11, 0.15)',
       desc: 'Sustained packet loss & frequent re-authentications'
     }
   }
@@ -67,8 +63,8 @@ export function getFailurePattern(router) {
     return {
       label: 'High Evening Latency',
       code: 'LATENCY',
-      color: '#eab308',
-      bg: 'rgba(234, 179, 8, 0.12)',
+      color: '#6366f1', // Indigo / Violet
+      bg: 'rgba(99, 102, 241, 0.15)',
       desc: 'Channel congestion or bandwidth bottleneck'
     }
   }
@@ -77,8 +73,8 @@ export function getFailurePattern(router) {
     return {
       label: 'User Expectation Gap',
       code: 'EXPECTATION',
-      color: '#3b82f6',
-      bg: 'rgba(59, 130, 246, 0.12)',
+      color: '#06b6d4', // Cyan Sky
+      bg: 'rgba(6, 182, 212, 0.15)',
       desc: 'Healthy infrastructure; non-router user issue'
     }
   }
@@ -87,8 +83,8 @@ export function getFailurePattern(router) {
     return {
       label: 'Optimal Performance',
       code: 'OPTIMAL',
-      color: '#10b981',
-      bg: 'rgba(16, 185, 129, 0.12)',
+      color: '#10b981', // Emerald Green
+      bg: 'rgba(16, 185, 129, 0.15)',
       desc: 'All network metrics operating within normal range'
     }
   }
@@ -96,8 +92,8 @@ export function getFailurePattern(router) {
   return {
     label: 'General Degradation',
     code: 'DEGRADED',
-    color: '#8b5cf6',
-    bg: 'rgba(139, 92, 246, 0.12)',
+    color: '#8b5cf6', // Purple
+    bg: 'rgba(139, 92, 246, 0.15)',
     desc: 'Multiple minor metric deviations'
   }
 }

@@ -1,4 +1,4 @@
-// App.jsx — Main Application Root with Theme Engine, Fleet State, and Responsive Layout
+// App.jsx — Main Application Root with Theme Engine, Fleet Analytics, and Donut Pattern Sync
 
 import { useEffect, useState } from 'react'
 import { getRankings } from './api/client.js'
@@ -9,14 +9,14 @@ import RouterDetail from './components/RouterDetail.jsx'
 import { getRouterStatus } from './components/ScoreUtils.js'
 
 export default function App() {
-  // Theme State: Day / Night Mode (Dark by default as requested in spec)
+  // Theme State: Day / Night Mode
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('theme')
     if (saved !== null) return saved === 'dark'
-    return true // Default dark theme (#0B0F19)
+    return true
   })
 
-  // Data States
+  // Fleet Data States
   const [routers, setRouters] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -27,8 +27,9 @@ export default function App() {
   const [statusFilter, setStatusFilter] = useState('all') // 'all' | 'critical' | 'warning' | 'healthy'
   const [buildingFilter, setBuildingFilter] = useState('all')
   const [firmwareFilter, setFirmwareFilter] = useState('all')
+  const [patternFilter, setPatternFilter] = useState('all') // Failure Pattern Donut Filter Code
 
-  // Theme Sync effect
+  // Theme Sync
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark')
@@ -41,25 +42,24 @@ export default function App() {
 
   const toggleTheme = () => setIsDark((prev) => !prev)
 
-  // Fetch rankings on load
+  // Fetch Rankings
   useEffect(() => {
     getRankings()
       .then((data) => {
         setRouters(data)
-        // Auto-select worst router if available
         if (data.length > 0) setSelectedId(data[0].router_id)
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [])
 
-  // Fleet summary stats
+  // Fleet Summary Stats
   const totalCount = routers.length
   const criticalCount = routers.filter((r) => getRouterStatus(r.score) === 'critical').length
   const avgScore = totalCount > 0 ? routers.reduce((acc, r) => acc + (r.score ?? 0), 0) / totalCount : 0
 
   return (
-    <div className="min-h-screen bg-[var(--bg-app)] text-[var(--text-main)] transition-colors duration-200">
+    <div className="min-h-screen bg-[var(--bg-app)] text-[var(--text-main)] transition-colors duration-150">
       
       {/* Header with Day/Night Theme Switcher */}
       <Header
@@ -70,21 +70,23 @@ export default function App() {
         avgScore={avgScore}
       />
 
-      {/* Main Container */}
-      <main className="max-w-[1700px] mx-auto px-4 sm:px-6 py-6">
+      {/* Main Content Area */}
+      <main className="max-w-[1700px] mx-auto px-4 sm:px-6 py-5">
         
-        {/* Fleet Health Distribution Analytics & Failure Pattern Clusters (Bonus) */}
+        {/* Fleet Health Distribution & Donut Chart */}
         <FleetAnalytics
           routers={routers}
           activeStatusFilter={statusFilter}
           onSelectStatusFilter={setStatusFilter}
+          activePatternFilter={patternFilter}
+          onSelectPatternFilter={setPatternFilter}
         />
 
         {/* 2-Panel Core Dashboard Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           
-          {/* Left Panel: Navigation, Search, Filters & Cards */}
-          <aside className="lg:col-span-4 theme-card h-[calc(100vh-210px)] overflow-hidden flex flex-col sticky top-22">
+          {/* Left Navigation & Search Pane */}
+          <aside className="lg:col-span-4 enterprise-card h-[calc(100vh-200px)] overflow-hidden flex flex-col sticky top-20">
             <RankingsTable
               routers={routers}
               selectedId={selectedId}
@@ -99,10 +101,12 @@ export default function App() {
               onBuildingFilterChange={setBuildingFilter}
               firmwareFilter={firmwareFilter}
               onFirmwareFilterChange={setFirmwareFilter}
+              patternFilter={patternFilter}
+              onPatternFilterChange={setPatternFilter}
             />
           </aside>
 
-          {/* Right Panel: Detailed Metrics, Metadata, Charts, Complaints & AI Copilot */}
+          {/* Right Detail Pane */}
           <section className="lg:col-span-8">
             <RouterDetail routerId={selectedId} isDark={isDark} />
           </section>

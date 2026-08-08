@@ -1,6 +1,6 @@
 // components/RankingsTable.jsx — Enterprise Fleet Navigation Sidebar (Search, Filters, Compact Cards)
 
-import { Search, Building2, Cpu, Filter, X } from 'lucide-react'
+import { Search, Building2, Cpu, Filter, X, RotateCcw } from 'lucide-react'
 import { getRouterStatus, getStatusBadgeClass, getStatusLabel, getScoreColor, getFailurePattern } from './ScoreUtils.js'
 
 export default function RankingsTable({
@@ -17,6 +17,8 @@ export default function RankingsTable({
   onBuildingFilterChange,
   firmwareFilter,
   onFirmwareFilterChange,
+  patternFilter,
+  onPatternFilterChange,
 }) {
   if (loading) {
     return (
@@ -41,6 +43,7 @@ export default function RankingsTable({
   ).sort()
 
   const filtered = routers.filter((r) => {
+    // Search query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim()
       const matchId = (r.router_id || '').toLowerCase().includes(q)
@@ -51,19 +54,28 @@ export default function RankingsTable({
       if (!matchId && !matchBldg && !matchRoom && !matchModel && !matchFw) return false
     }
 
+    // Status filter
     if (statusFilter !== 'all') {
       const status = getRouterStatus(r.score)
       if (status !== statusFilter) return false
     }
 
+    // Building filter
     if (buildingFilter !== 'all' && r.building !== buildingFilter) {
       return false
     }
 
+    // Firmware filter
     if (firmwareFilter !== 'all') {
       if (r.firmware_version !== firmwareFilter && r.model !== firmwareFilter) {
         return false
       }
+    }
+
+    // Failure Pattern Donut Filter
+    if (patternFilter && patternFilter !== 'all') {
+      const pat = getFailurePattern(r)
+      if (pat.code !== patternFilter) return false
     }
 
     return true
@@ -84,7 +96,7 @@ export default function RankingsTable({
           </span>
         </div>
 
-        {/* Real-time Search Box */}
+        {/* Search Box */}
         <div className="relative">
           <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-subtle)]" />
           <input
@@ -105,6 +117,19 @@ export default function RankingsTable({
             </button>
           )}
         </div>
+
+        {/* Active Pattern Filter Pill (when Donut chart slice is selected) */}
+        {patternFilter && patternFilter !== 'all' && (
+          <div className="flex items-center justify-between p-1.5 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-[11px]">
+            <span>Filter: <strong>{patternFilter}</strong></span>
+            <button
+              onClick={() => onPatternFilterChange('all')}
+              className="hover:underline flex items-center gap-1 font-mono text-[10px] cursor-pointer"
+            >
+              <RotateCcw className="w-2.5 h-2.5" /> Clear
+            </button>
+          </div>
+        )}
 
         {/* Status Filter Tabs */}
         <div className="flex gap-1 p-0.5 rounded-lg bg-[var(--bg-chip)] border border-[var(--border-card)]">
@@ -128,7 +153,7 @@ export default function RankingsTable({
           ))}
         </div>
 
-        {/* Building & Firmware Filter Selects */}
+        {/* Building & Firmware Filters */}
         <div className="grid grid-cols-2 gap-1.5">
           <div className="relative">
             <Building2 className="w-3 h-3 absolute left-2 top-1/2 -translate-y-1/2 text-[var(--text-subtle)] pointer-events-none" />
@@ -169,7 +194,7 @@ export default function RankingsTable({
 
       </div>
 
-      {/* Router Cards List */}
+      {/* Router Cards */}
       <div className="flex-1 overflow-y-auto p-2.5 space-y-2">
         {filtered.length === 0 ? (
           <div className="text-center py-10 text-[var(--text-muted)]">
@@ -181,10 +206,11 @@ export default function RankingsTable({
                 onStatusFilterChange('all')
                 onBuildingFilterChange('all')
                 onFirmwareFilterChange('all')
+                onPatternFilterChange('all')
               }}
               className="mt-2 text-xs text-blue-500 hover:underline cursor-pointer"
             >
-              Reset filters
+              Reset all filters
             </button>
           </div>
         ) : (
@@ -211,7 +237,6 @@ export default function RankingsTable({
                 aria-label={`Router ${router.router_id}, health score ${router.score}`}
                 aria-pressed={isSelected}
               >
-                {/* Header Row */}
                 <div className="flex items-center justify-between gap-2 mb-1.5">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] font-mono text-[var(--text-subtle)]">#{index + 1}</span>
@@ -231,7 +256,6 @@ export default function RankingsTable({
                   </div>
                 </div>
 
-                {/* Score Track */}
                 <div className="w-full h-1 rounded-full bg-[var(--bg-chip)] overflow-hidden mb-2">
                   <div
                     className="h-full rounded-full transition-all duration-300"
@@ -239,7 +263,6 @@ export default function RankingsTable({
                   />
                 </div>
 
-                {/* Meta & Failure Pattern Tag */}
                 <div className="flex items-center justify-between text-[10px]">
                   <span className="text-[var(--text-muted)] truncate max-w-[150px]">
                     {router.building} · Rm {router.room}
